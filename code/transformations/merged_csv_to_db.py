@@ -3,17 +3,13 @@ from dotenv import load_dotenv
 import pandas as pd
 import os
 
-# Load environment variables
 load_dotenv()
 
-# Database connection URL
 db_connection_url = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 engine = create_engine(db_connection_url)
 
-# Load the CSV data into a DataFrame
 data = pd.read_csv('data/merged_data.csv')
 
-# Define the SQL command to create a table adapted to the dataset
 sql_create_table = text("""
 CREATE TABLE IF NOT EXISTS merged_data (
     year INTEGER,
@@ -52,10 +48,8 @@ CREATE TABLE IF NOT EXISTS merged_data (
 );
 """)
 
-# Execute the SQL command to create the table
 with engine.connect() as connection:
     connection.execute(sql_create_table)
 
-# Insert the data into the database
 data.to_sql('merged_data', engine, if_exists='replace', index=False)
 
